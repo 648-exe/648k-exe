@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Top G</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Poppins',sans-serif;background:#050505;color:#e8e8e8;overflow:hidden}
+.bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:brightness(.55) contrast(1.05)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1;pointer-events:none}
+.intro{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);cursor:pointer;transition:opacity .7s cubic-bezier(.22,1,.36,1),visibility .7s}
+.intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro span{font-size:1.05rem;font-weight:500;letter-spacing:.08em;color:rgba(255,255,255,.85);text-transform:uppercase;padding:12px 28px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.04);transition:background .2s,border-color .2s,transform .25s}
+.intro:hover span{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.28);transform:scale(1.03)}
+.wrap{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;perspective:1200px}
+.stack{display:flex;flex-direction:column;align-items:center;gap:18px;transform-style:preserve-3d;will-change:transform;opacity:0;transform:translateY(36px) scale(.97);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.stack.show{opacity:1;transform:translateY(0) scale(1)}
+.stack.tilting{transition:transform .12s ease-out}
+.card{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.22,1,.36,1) .15s,transform .6s cubic-bezier(.22,1,.36,1) .15s}
+.clock-card{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,1,.36,1) .45s,transform .55s cubic-bezier(.22,1,.36,1) .45s}
+.stack.show .card,.stack.show .clock-card{opacity:1;transform:translateY(0)}
+.socials{opacity:0;transition:opacity .5s ease .55s}
+.stack.show .socials{opacity:1}
+.card,.clock-card{position:relative;background:rgba(12,12,14,.84);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:22px}
+.card{padding:22px 26px;width:min(420px,94vw);box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.clock-card{display:flex;align-items:center;gap:14px;padding:14px 20px;width:min(420px,94vw);box-shadow:0 10px 30px rgba(0,0,0,.5);border-radius:18px}
+@property --beam{syntax:'<angle>';inherits:false;initial-value:0deg}
+.card::before,.clock-card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:conic-gradient(from var(--beam),transparent 0%,transparent 84%,rgba(255,255,255,.15) 89%,rgba(255,255,255,.9) 92.5%,rgba(255,255,255,.15) 96%,transparent 100%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;animation:beamMove 5s linear infinite;z-index:0}
+@keyframes beamMove{to{--beam:360deg}}
+.top{display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.avatar-wrap{position:relative;width:78px;height:78px;flex-shrink:0}
+.avatar{width:78px;height:78px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,255,255,.1)}
+.decoration{position:absolute;inset:-18px;width:calc(100% + 36px);height:calc(100% + 36px);pointer-events:none;object-fit:contain}
+.info{flex:1;min-width:0;position:relative;z-index:1}
+.name-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.name{font-size:1.15rem;font-weight:600;color:#f2f2f2;letter-spacing:.2px;position:relative;cursor:default}
+.name:hover::after{content:"UID 1";position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:.68rem;font-weight:500;padding:4px 9px;border-radius:6px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.5);pointer-events:none;z-index:20;letter-spacing:.03em}
+.name:hover::before{content:"";position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#111;z-index:20}
+.badge{width:17px;height:17px;object-fit:contain;flex-shrink:0}
+.user{font-size:.8rem;color:#8a8a8a;margin-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:.7rem;font-weight:500;color:#b0b0b0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:3px 10px;border-radius:999px;letter-spacing:.02em}
+.socials{display:flex;justify-content:center;gap:16px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:1}
+.socials a{color:#7a7a7a;transition:color .2s,transform .2s;display:inline-flex;align-items:center}
+.socials a:hover{color:#e0e0e0;transform:translateY(-2px)}
+.socials img,.socials svg{width:18px;height:18px}
+.socials a img{filter:grayscale(1) brightness(0.75);opacity:.85;transition:filter .2s,opacity .2s}
+.socials a:hover img{filter:grayscale(1) brightness(1.1);opacity:1}
+.clock-svg{width:42px;height:42px;flex-shrink:0;color:#fff;position:relative;z-index:1}
+.clock-text{display:flex;flex-direction:column;gap:1px;position:relative;z-index:1}
+.clock-time{font-size:1.15rem;font-weight:600;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+.clock-date{font-size:.72rem;color:#888}
+.clock-offset{font-size:.68rem;color:#666}
+.volume{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:10px;background:rgba(14,14,16,.88);backdrop-filter:blur(12px);padding:8px 16px;border-radius:999px;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .5s ease .3s}
+.volume.show{opacity:1;pointer-events:auto}
+.volume svg{width:18px;height:18px;color:#ccc;flex-shrink:0}
+.volume input[type=range]{-webkit-appearance:none;appearance:none;width:110px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;outline:none}
+.volume input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 0 6px rgba(0,0,0,.4)}
+.volume input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer;border:none}
+</style>
+</head>
+<body>
+<video class="bg-video" id="bg" muted loop playsinline preload="auto">
+<source src="https://raw.githubusercontent.com/648-exe/648k-exe/refs/heads/main/drill.mp4" type="video/mp4">
+</video>
+<audio id="bgm" loop preload="auto">
+<source src="https://raw.githubusercontent.com/648-exe/648k-exe/refs/heads/main/audio.mp3" type="audio/mpeg">
+</audio>
+<div class="overlay"></div>
+<div class="intro" id="intro">
+<span>Click here</span>
+</div>
+<div class="wrap" id="wrap">
+<div class="stack" id="stack">
+<div class="card">
+<div class="top">
+<div class="avatar-wrap">
+<img class="avatar" src="https://egpkgdguwfzsmuqywgrb.supabase.co/storage/v1/object/public/profile-images/72ab6e35-d79e-4bbb-8f76-f188801b0e94/avatar-1783313046579-8049eae1-752e-43e1-bfc8-69757b4faabd.jpeg" alt="">
+<img class="decoration" src="https://cdn.discordapp.com/avatar-decoration-presets/a_7f863078aee4932cd50ee4e3b55d3035.png" alt="" aria-hidden="true">
+</div>
+<div class="info">
+<div class="name-row">
+<span class="name" id="type"></span>
+<img class="badge" src="https://raw.githubusercontent.com/648-exe/648k-exe/refs/heads/main/verified-badge.png" alt="">
+</div>
+<div class="user">@648k</div>
+<div class="tags">
+<span class="tag">Max larper</span>
+<span class="tag">648k</span>
+<span class="tag">exe</span>
+</div>
+</div>
+</div>
+<div class="socials">
+<a href="#" aria-label="snapchat"><img src="https://crad.lol/icons/platforms/snapchat.svg" alt="" width="18" height="18"></a>
+<a href="#" aria-label="instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+<a href="#" aria-label="tiktok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .54.04.79.12v-3.5a6.37 6.37 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.7a8.16 8.16 0 004.77 1.52V6.84a4.84 4.84 0 01-1.2-.15z"/></svg></a>
+<a href="#" aria-label="spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
+<a href="#" aria-label="discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg></a>
+</div>
+</div>
+<div class="clock-card">
+<svg viewBox="0 0 100 100" class="clock-svg" aria-hidden="true">
+<circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2" opacity=".15"></circle>
+<line x1="50" y1="12" x2="50" y2="6" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="69" y1="17.091" x2="72" y2="11.895" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="82.909" y1="31" x2="88.105" y2="28" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="88" y1="50" x2="94" y2="50" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="82.909" y1="69" x2="88.105" y2="72" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="69" y1="82.909" x2="72" y2="88.105" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="50" y1="88" x2="50" y2="94" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="31" y1="82.909" x2="28" y2="88.105" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="17.091" y1="69" x2="11.895" y2="72" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="12" y1="50" x2="6" y2="50" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="17.091" y1="31" x2="11.895" y2="28" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<line x1="31" y1="17.091" x2="28" y2="11.895" stroke="currentColor" stroke-width="2" opacity=".7"></line>
+<g id="hourHand" style="transform-origin:50px 50px">
+<line x1="50" y1="50" x2="50" y2="28" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"></line>
+</g>
+<g id="minuteHand" style="transform-origin:50px 50px">
+<line x1="50" y1="50" x2="50" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+</g>
+<g id="secondHand" style="transform-origin:50px 50px">
+<line x1="50" y1="54" x2="50" y2="16" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"></line>
+</g>
+<circle cx="50" cy="50" r="3" fill="currentColor"></circle>
+</svg>
+<div class="clock-text">
+<div class="clock-time" id="timeStr">00:00:00</div>
+<div class="clock-date" id="dateStr"></div>
+<div class="clock-offset" id="offsetStr"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="volume" id="volWrap">
+<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+<input type="range" id="vol" min="0" max="1" step="0.01" value="0.45">
+</div>
+<script>
+const intro=document.getElementById('intro');
+const stack=document.getElementById('stack');
+const volWrap=document.getElementById('volWrap');
+const bg=document.getElementById('bg');
+const bgm=document.getElementById('bgm');
+const vol=document.getElementById('vol');
+const typeEl=document.getElementById('type');
+const full='The Top G';
+let charIndex=0;
+let isDeleting=false;
+let started=false;
+function typeLoop(){
+if(!started)return;
+typeEl.textContent=full.slice(0,charIndex);
+if(!isDeleting&&charIndex===full.length){
+setTimeout(()=>{isDeleting=true;typeLoop()},1800);
+return;
+}
+if(isDeleting&&charIndex===0){
+isDeleting=false;
+setTimeout(typeLoop,600);
+return;
+}
+if(isDeleting)charIndex--;
+else charIndex++;
+setTimeout(typeLoop,isDeleting?38:68);
+}
+intro.addEventListener('click',()=>{
+if(started)return;
+started=true;
+intro.classList.add('hide');
+stack.classList.add('show');
+volWrap.classList.add('show');
+bg.play().catch(()=>{});
+bgm.volume=parseFloat(vol.value);
+bgm.play().catch(()=>{});
+typeLoop();
+setTimeout(()=>{tiltReady=true;stackEl.classList.add('tilting')},900);
+});
+vol.addEventListener('input',()=>{bgm.volume=parseFloat(vol.value)});
+const cities=[
+{name:'Berlin',tz:'Europe/Berlin'},
+{name:'Paris',tz:'Europe/Paris'},
+{name:'Amsterdam',tz:'Europe/Amsterdam'},
+{name:'Madrid',tz:'Europe/Madrid'},
+{name:'Rome',tz:'Europe/Rome'},
+{name:'Stockholm',tz:'Europe/Stockholm'},
+{name:'Vienna',tz:'Europe/Vienna'},
+{name:'Prague',tz:'Europe/Prague'},
+{name:'Warsaw',tz:'Europe/Warsaw'},
+{name:'Budapest',tz:'Europe/Budapest'},
+{name:'Copenhagen',tz:'Europe/Copenhagen'},
+{name:'Brussels',tz:'Europe/Brussels'},
+{name:'Lisbon',tz:'Europe/Lisbon'},
+{name:'Athens',tz:'Europe/Athens'},
+{name:'Helsinki',tz:'Europe/Helsinki'}
+];
+const place=cities[Math.floor(Math.random()*cities.length)];
+function updateClock(){
+const now=new Date();
+const fmt=new Intl.DateTimeFormat('en-GB',{timeZone:place.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+const parts=fmt.formatToParts(now);
+const h=parseInt(parts.find(p=>p.type==='hour').value);
+const m=parseInt(parts.find(p=>p.type==='minute').value);
+const s=parseInt(parts.find(p=>p.type==='second').value);
+const ms=now.getMilliseconds();
+const hs=((h%12)+m/60+s/3600)*30;
+const mins=(m+s/60+ms/60000)*6;
+const secs=(s+ms/1000)*6;
+document.getElementById('hourHand').style.transform=`rotate(${hs}deg)`;
+document.getElementById('minuteHand').style.transform=`rotate(${mins}deg)`;
+document.getElementById('secondHand').style.transform=`rotate(${secs}deg)`;
+const pad=n=>String(n).padStart(2,'0');
+document.getElementById('timeStr').textContent=`${pad(h)}:${pad(m)}:${pad(s)}`;
+const dFmt=new Intl.DateTimeFormat('en-GB',{timeZone:place.tz,weekday:'short',month:'short',day:'numeric',timeZoneName:'shortOffset'});
+const dParts=dFmt.formatToParts(now);
+const weekday=dParts.find(p=>p.type==='weekday')?.value||'';
+const month=dParts.find(p=>p.type==='month')?.value||'';
+const day=dParts.find(p=>p.type==='day')?.value||'';
+const offset=dParts.find(p=>p.type==='timeZoneName')?.value||'';
+document.getElementById('dateStr').textContent=`${weekday}, ${month} ${day} · ${offset}`;
+document.getElementById('offsetStr').textContent=place.name;
+}
+updateClock();
+setInterval(updateClock,50);
+const stackEl=document.getElementById('stack');
+let tiltReady=false;
+stackEl.addEventListener('mousemove',e=>{
+if(!tiltReady)return;
+const rect=stackEl.getBoundingClientRect();
+const x=e.clientX-rect.left;
+const y=e.clientY-rect.top;
+const cx=rect.width/2;
+const cy=rect.height/2;
+const rx=((y-cy)/cy)*-8;
+const ry=((x-cx)/cx)*8;
+stackEl.style.transform=`translateY(0) scale(1) rotateX(${rx}deg) rotateY(${ry}deg)`;
+});
+stackEl.addEventListener('mouseleave',()=>{
+if(!tiltReady)return;
+stackEl.style.transform='translateY(0) scale(1) rotateX(0deg) rotateY(0deg)';
+});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='U')||(e.metaKey&&e.altKey&&e.key==='I')){
+e.preventDefault();
+e.stopPropagation();
+return false;
+}
+});
+document.addEventListener('selectstart',e=>e.preventDefault());
+</script>
+</body>
+</html>
